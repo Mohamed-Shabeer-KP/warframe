@@ -18,8 +18,8 @@ mods_data: List[Mod] = []
 market_data: List[Item] = []
 
 MODS_URL = 'https://raw.githubusercontent.com/WFCD/warframe-items/master/data/json/Mods.json'
-MARKET_ITEMS_URL = 'https://api.warframe.market/v1/items'
-MARKET_ORDER_URL = 'https://api.warframe.market/v1/items/{}/orders'
+MARKET_ITEMS_URL = 'https://api.warframe.market/v2/items'
+MARKET_ORDER_URL = 'https://api.warframe.market/v2/items/{}/orders'
 
 # Import the functions from app.py
 # from app import getMods, getMarket, loc, mods_data, market_data, find_market_url, fetch_orders_for_mod
