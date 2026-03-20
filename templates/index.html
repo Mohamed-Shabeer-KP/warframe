@@ -89,7 +89,8 @@
         </div>
          -->
         <form action="{{ url_for('search') }}" method="post">
-            <label>Enter Paste bin url of mod list (mods should be in new lines and give mod slug):</label><br>
+            <label>Enter Paste bin <b>raw</b> url of mod list (mods should be in new lines and give mod slug):</label><br>
+            <p>Example: https://pastebin.com/raw/AQtRzHCp</p>
             <input type="text" name="locations" required>
             <button type="submit">Search</button>
         </form>
