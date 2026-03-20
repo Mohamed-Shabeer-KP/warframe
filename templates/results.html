@@ -7,7 +7,12 @@
     <h1>Search Results for "{{ search_query }}"</h1>
 
     {% if error %}
-        <p style="color:red;">{{ error }}</p>
+        <h2>Errors:</h2>
+        <ul>
+        {% for err in error %}
+            <li style="color:red;">{{ err }}</li>
+        {% endfor %}
+        </ul>
     {% endif %}
 
     {% if orders %}
@@ -24,16 +29,6 @@
         {% endfor %}
         </ul>
     {% endif %}
-
-    {% if errors %}
-        <h2>Errors:</h2>
-        <ul>
-        {% for error in errors %}
-            <li style="color:red;">{{ error }}</li>
-        {% endfor %}
-        </ul>
-    {% endif %}
-
     <br>
     <a href="{{ url_for('index') }}">Back to Search</a>
 </body>
