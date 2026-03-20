@@ -10,16 +10,6 @@
         <p style="color:red;">{{ error }}</p>
     {% endif %}
 
-    {% if mods_found %}
-        <h2>Matching Mods:</h2>
-        <p>Found {{ mods_found | length }} mods in the specified locations:</p>
-        <ul>
-        {% for mod, locations in mods_found.items() %}
-            <li><strong>{{ mod }}</strong> — {{ locations | join(', ') }}</li>
-        {% endfor %}
-        </ul>
-    {% endif %}
-
     {% if orders %}
         <h2>Top In-Game Buyers:</h2>
         <ul>
@@ -31,6 +21,15 @@
                 <a href="https://warframe.market/items/{{ order.mod_name }}" target="_blank">View Market</a><br>
                 Drop Locations: {{ order.mod_locations | join(', ') }}
             </li>
+        {% endfor %}
+        </ul>
+    {% endif %}
+
+    {% if errors %}
+        <h2>Errors:</h2>
+        <ul>
+        {% for error in errors %}
+            <li style="color:red;">{{ error }}</li>
         {% endfor %}
         </ul>
     {% endif %}

@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, redirect, url_for
+from flask import Flask, render_template, request, redirect, url_for, flash
 import sys
 import io
 
@@ -7,6 +7,9 @@ from typing import List, Dict, Any
 from contextlib import redirect_stdout
 
 import requests
+
+app = Flask(__name__)
+app.secret_key = "your_secret_key_here" 
 
 # Type aliases for readability
 Mod = Dict[str, Any]
@@ -17,18 +20,11 @@ Item = Dict[str, Any]
 mods_data: List[Mod] = []
 market_data: List[Item] = []
 
-MODS_URL = 'https://raw.githubusercontent.com/WFCD/warframe-items/master/data/json/Mods.json'
 MARKET_ITEMS_URL = 'https://api.warframe.market/v2/items'
 MARKET_ORDER_URL = 'https://api.warframe.market/v2/orders/item/{}'
 
-# Import the functions from app.py
-# from app import getMods, getMarket, loc, mods_data, market_data, find_market_url, fetch_orders_for_mod
-
-app = Flask(__name__)
-
 # Global variables to store search results
 search_results = {}
-
 
 def fetch_json(url: str) -> Any:
     """Helper to fetch and return JSON from a URL."""
@@ -59,6 +55,7 @@ def fetch_orders_for_mod(mod_slug: str) -> List[Order]:
     """Fetch orders for a given mod and tag each order with its mod name and URL."""
     orders_data = fetch_json(MARKET_ORDER_URL.format(mod_slug))
     print(f"🔍 Fetching orders for '{mod_slug}' from URL: {MARKET_ORDER_URL.format(mod_slug)}")
+    flash(f"🔍 Fetching orders for '{mod_slug}' from URL: {MARKET_ORDER_URL.format(mod_slug)}")
     return orders_data
     print(f"⚠️  Failed to fetch orders for '{mod_slug}'.")
     return []
@@ -115,13 +112,19 @@ def modified_loc(user_input_prompt: str):
 
     print(f"🔍 Fetching orders")
     all_orders = []
+    error_list = []
     for mod in pastebin_mods:
-        orders = fetch_orders_for_mod(mod)
+        try:
+            orders = fetch_orders_for_mod(mod)
 
-        for x in orders['data']:
-            x['mod_name'] = mod
+            for x in orders['data']:
+                x['mod_name'] = mod
 
-        all_orders.append(orders['data'])
+            all_orders.append(orders['data'])
+        except Exception as e:
+            print(f"❌ Error fetching orders for mod '{mod}': {e}")
+            error = f"Error fetching orders for mod '{mod}': {e}"
+            error_list.append(error)
 
     # Filter and sort orders (only visible, in-game, buy orders)
     sell_orders = []
@@ -136,7 +139,8 @@ def modified_loc(user_input_prompt: str):
                            reverse=True)
 
     return {
-        "orders": sorted_orders
+        "orders": sorted_orders,
+        "error":  error_list
     }
 
 
