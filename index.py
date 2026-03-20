@@ -47,7 +47,7 @@ def getMarket():
         market_data = data.get("data", [])
         print(f"✅ Fetched {len(market_data)} market items.")
 
-def getMods(mod_location: str):
+def getMod(mod_location: str):
     global mods_data
     if market_data:
         # Check for gameRef in market_data items and filter by mod_location 
@@ -63,48 +63,63 @@ def fetch_orders_for_mod(mod_slug: str) -> List[Order]:
     print(f"⚠️  Failed to fetch orders for '{mod_slug}'.")
     return []
 
-def modified_loc(user_locations: str) -> Dict[str, Any]:
+def getPaste(user_input: str):
+    """Fetch mod list from Pastebin URL and return as a list of mod slugs."""
+    try:
+        response = requests.get(user_input)
+        if response.status_code == 200:
+            mods_list = response.text.strip().splitlines()
+            print(f"✅ Fetched {len(mods_list)} mods from Pastebin.")
+            return mods_list
+        print(f"❌ Failed to fetch data from Pastebin — Status code: {response.status_code}")
+    except Exception as e:
+        print(f"❌ Error fetching data from Pastebin: {e}")
+    return []
+
+def modified_loc(user_input_prompt: str):
     """Modified version of loc() that returns results instead of printing them"""
     
-    print(f"🔍 Fetching market")
-    getMarket()
+    # print(f"🔍 Fetching market")
+    # getMarket()
     
-    locations_map = {
-        "1": "augment",
-        "2": "warframe",
-    }
+    # locations_map = {
+    #     "1": "augment",
+    #     "2": "warframe",
+    # }
 
     # Process user input
-    user_input = user_locations.split(",")
+    user_input = user_input_prompt
 
     # Process input: convert numbers via map, keep others as custom locations
-    selected_locations = []
-    for val in user_input:
-        val = val.strip()
-        if val in locations_map:
-            print(locations_map[val], file=sys.stderr)
-            selected_locations.append(locations_map[val].strip().lower())
-        else:
-            print(val, file=sys.stderr)
-            selected_locations.append(val.strip().lower())
+    # selected_locations = []
+    # for val in user_input:
+    #     val = val.strip()
+    #     if val in locations_map:
+    #         print(locations_map[val], file=sys.stderr)
+    #         selected_locations.append(locations_map[val].strip().lower())
+    #     else:
+    #         print(val, file=sys.stderr)
+    #         selected_locations.append(val.strip().lower())
 
-    if not selected_locations:
-        return {
-            "error": "Invalid input. Please enter at least one valid location."
-        }
+    # if not selected_locations:
+    #     return {
+    #         "error": "Invalid input. Please enter at least one valid location."
+    #     }
 
-    print(f"🔍 Fetching mods")
-    mods_list = []
-    for loc in selected_locations:
-        mods_list.append(getMods(loc))
+    pastebin_mods = getPaste(user_input)
 
-    # Fetch market orders
+    # print(f"🔍 Fetching mods")
+    # mods_list = []
+    # for mod in pastebin_items:
+    #     mods_list.append(getMod(mod))
+
+    print(f"🔍 Fetching orders")
     all_orders = []
-    for mod in mods_data:
-        orders = fetch_orders_for_mod(mod['slug'])
+    for mod in pastebin_mods:
+        orders = fetch_orders_for_mod(mod)
 
         for x in orders['data']:
-            x['mod_name'] = mod['slug']
+            x['mod_name'] = mod
 
         all_orders.append(orders['data'])
 

@@ -82,14 +82,14 @@
     <div class="container">
         <h1>🔍 Warframe Mod Selling - Search using warframe name</h1>
         
-        <div class="locations-help">
+        <!-- <div class="locations-help">
             <h3>Available Quick Options:</h3>
             <div class="location-option">1. Augment</div>
             <div class="location-option">2. Warframe</div>
         </div>
-        
+         -->
         <form action="{{ url_for('search') }}" method="post">
-            <label>Enter Syndicate or location names (e.g., 1, 2 or Arbitrers):</label><br>
+            <label>Enter Paste bin url of mod list (mods should be in new lines and give mod slug):</label><br>
             <input type="text" name="locations" required>
             <button type="submit">Search</button>
         </form>
