@@ -19,7 +19,7 @@ market_data: List[Item] = []
 
 MODS_URL = 'https://raw.githubusercontent.com/WFCD/warframe-items/master/data/json/Mods.json'
 MARKET_ITEMS_URL = 'https://api.warframe.market/v2/items'
-MARKET_ORDER_URL = 'https://api.warframe.market/v2/items/{}/orders'
+MARKET_ORDER_URL = 'https://api.warframe.market/v2/orders/item/{}'
 
 # Import the functions from app.py
 # from app import getMods, getMarket, loc, mods_data, market_data, find_market_url, fetch_orders_for_mod
@@ -40,91 +40,38 @@ def fetch_json(url: str) -> Any:
     )
     return None
 
-
-def getMods():
-    global mods_data
-    data = fetch_json(MODS_URL)
-    if data:
-        mods_data = data
-        print(f"✅ Fetched {len(mods_data)} mods.")
-    return mods_data
-
-
 def getMarket():
     global market_data
     data = fetch_json(MARKET_ITEMS_URL)
     if data:
-        market_data = data.get("payload", {}).get("items", [])
+        market_data = data.get("data", [])
         print(f"✅ Fetched {len(market_data)} market items.")
 
+def getMods(mod_location: str):
+    global mods_data
+    if market_data:
+        # Check for gameRef in market_data items and filter by mod_location 
+        mods_data = [item for item in market_data if mod_location.lower() in item.get("tags", "")]
+        print(f"✅ Fetched {len(mods_data)} mods.")
+    return mods_data
 
-def find_market_url(mod_name: str) -> str:
-    """Finds the market URL slug for a given mod name."""
-    for item in market_data:
-        if item.get("item_name", "").lower() == mod_name.lower():
-            return item.get("url_name", "")
-    return ""
-
-
-def fetch_orders_for_mod(mod_name: str, mod_url: str) -> List[Order]:
+def fetch_orders_for_mod(mod_slug: str) -> List[Order]:
     """Fetch orders for a given mod and tag each order with its mod name and URL."""
-    orders_data = fetch_json(MARKET_ORDER_URL.format(mod_url))
-    if orders_data:
-        orders = orders_data.get("payload", {}).get("orders", [])
-        for order in orders:
-            order["mod_name"] = mod_name
-            order["mod_url"] = mod_url
-        return orders
-    print(f"⚠️  Failed to fetch orders for '{mod_name}'.")
+    orders_data = fetch_json(MARKET_ORDER_URL.format(mod_slug))
+    print(f"🔍 Fetching orders for '{mod_slug}' from URL: {MARKET_ORDER_URL.format(mod_slug)}")
+    return orders_data
+    print(f"⚠️  Failed to fetch orders for '{mod_slug}'.")
     return []
-
-
-def displayOrders(all_orders: List[Dict[str, Any]]):
-    print("\nAll Orders (sorted by price: high → low, in-game users only):")
-
-    # Filter only visible, in-game, sell orders
-    sell_orders = [
-        order for order in all_orders
-        if (order.get("visible") and order.get("order_type") == "buy"
-            and order.get("user", {}).get("status") == "ingame")
-    ]
-
-    # Sort descending by platinum
-    sorted_orders = sorted(sell_orders,
-                           key=lambda x: x.get("platinum", 0),
-                           reverse=True)
-
-    if not sorted_orders:
-        print("  No in-game sellers found.")
-        return
-
-    for order in sorted_orders:
-        user = order.get("user", {})
-        ingame_name = user.get("ingame_name", "Unknown")
-        mod_name = order.get("mod_name", "Unknown Mod")
-        mod_url = order.get("mod_url", "")
-        mod_rank = order.get("mod_rank", "N/A")
-        platinum = order.get("platinum", "N/A")
-        locations = order.get("mod_locations", [])
-        locations_str = ", ".join(
-            locations) if locations else "Unknown Location"
-
-        print(
-            f"  • {ingame_name} [Rank {mod_rank}] → {platinum} platinum → {mod_name} | Locations: {locations_str} | https://warframe.market/items/{mod_url}"
-        )
-
 
 def modified_loc(user_locations: str) -> Dict[str, Any]:
     """Modified version of loc() that returns results instead of printing them"""
     
-    getMods()
+    print(f"🔍 Fetching market")
     getMarket()
     
     locations_map = {
-        "1": "Arbiters of Hexis",
-        "2": "Cephalon Suda",
-        "3": "Steel Meridian",
-        "4": "Entrati"
+        "1": "augment",
+        "2": "warframe",
     }
 
     # Process user input
@@ -146,43 +93,27 @@ def modified_loc(user_locations: str) -> Dict[str, Any]:
             "error": "Invalid input. Please enter at least one valid location."
         }
 
-    matching_mods = set()
-    mod_locations = {}
-
-    for mod in mods_data:
-        for drop in mod.get("drops", []):
-            location = drop.get("location", "").lower()
-            if any(search in location for search in selected_locations):
-                mod_name = mod.get("name", "Unknown Mod")
-                matching_mods.add(mod_name)
-                mod_locations.setdefault(mod_name, set()).add(
-                    drop.get("location", "Unknown Location"))
-                break
-
-    if not matching_mods:
-        return {"error": "No mods found for the selected location(s)."}
-
-    # Convert sets to lists for JSON serialization
-    for mod_name in mod_locations:
-        mod_locations[mod_name] = list(mod_locations[mod_name])
+    print(f"🔍 Fetching mods")
+    mods_list = []
+    for loc in selected_locations:
+        mods_list.append(getMods(loc))
 
     # Fetch market orders
-    all_orders: List[Dict[str, Any]] = []
-    for mod_name in matching_mods:
-        mod_url = find_market_url(mod_name)
-        if not mod_url:
-            continue
-        orders = fetch_orders_for_mod(mod_name, mod_url)
-        for order in orders:
-            order["mod_locations"] = mod_locations.get(mod_name, [])
-        all_orders.extend(orders)
+    all_orders = []
+    for mod in mods_data:
+        orders = fetch_orders_for_mod(mod['slug'])
+
+        for x in orders['data']:
+            x['mod_name'] = mod['slug']
+
+        all_orders.append(orders['data'])
 
     # Filter and sort orders (only visible, in-game, buy orders)
-    sell_orders = [
-        order for order in all_orders
-        if (order.get("visible") and order.get("order_type") == "buy"
-            and order.get("user", {}).get("status") == "ingame")
-    ]
+    sell_orders = []
+    for orders in all_orders:
+        for order in orders:
+            if (order['visible'] and order['type'] == 'buy' and order['user']['status'] == 'ingame'):
+                sell_orders.append(order)
 
     # Sort descending by platinum
     sorted_orders = sorted(sell_orders,
@@ -190,9 +121,7 @@ def modified_loc(user_locations: str) -> Dict[str, Any]:
                            reverse=True)
 
     return {
-        "mods_found": mod_locations,
-        "orders": sorted_orders,
-        "search_query": user_locations
+        "orders": sorted_orders
     }
 
 
@@ -200,7 +129,6 @@ def modified_loc(user_locations: str) -> Dict[str, Any]:
 def index():
     """Show the main search form"""
     return render_template('index.html')
-
 
 @app.route('/search', methods=['POST'])
 def search():
@@ -218,7 +146,6 @@ def search():
                            orders=results.get('orders', []),
                            error=results.get('error'),
                            search_query=results.get('search_query', locations))
-
 
 if __name__ == '__main__':
     # Initialize data on startup

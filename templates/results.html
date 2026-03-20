@@ -25,10 +25,10 @@
         <ul>
         {% for order in orders %}
             <li>
-                <strong>{{ order.user.ingame_name }}</strong> wants to buy 
-                <em><strong>{{ order.mod_name }}</strong></em> (Rank {{ order.mod_rank or 'N/A' }}) for 
+                <strong>{{ order.user.ingameName }}</strong> wants to buy 
+                <em><strong>{{ order.mod_name }}</strong></em> (Rank {{ order.rank or 'N/A' }}) for 
                 <strong>{{ order.platinum }} platinum</strong> —
-                <a href="https://warframe.market/items/{{ order.mod_url }}" target="_blank">View Market</a><br>
+                <a href="https://warframe.market/items/{{ order.mod_name }}" target="_blank">View Market</a><br>
                 Drop Locations: {{ order.mod_locations | join(', ') }}
             </li>
         {% endfor %}
