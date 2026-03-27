@@ -113,8 +113,8 @@ def processInput(user_input: str):
         pastebin_dict = processMainPaste()
         # if user_input in pastebin_dict:
         #     pastebin_mods = getPaste(pastebin_dict[user_input])
-        else:
-            print("Not found")
+        # else:
+        #     print("Not found")
     else:
         pastebin_mods = getPaste(user_input)
 
