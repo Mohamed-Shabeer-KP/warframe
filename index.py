@@ -78,6 +78,7 @@ def getMainPaste():
     return []
 
 def processMainPaste():
+    mapping = {}
     """Fetch main warframe collection paste"""
     try:
         response = requests.get(PATEBIN_URL_COLLECTION)
