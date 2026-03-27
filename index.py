@@ -164,7 +164,7 @@ def index():
     """Show the main search form"""
     results = getMainPaste()
     return render_template('index.html',
-                           pastebin=results.get('paste',[]),
+                           paste=results.get('paste',[]),
                         )
 
 @app.route('/search', methods=['POST'])

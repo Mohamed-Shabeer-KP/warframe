@@ -82,14 +82,8 @@
     <div class="container">
         <h1>🔍 Warframe Mod Selling - Search using warframe name</h1>
         
-        <!-- <div class="locations-help">
-            <h3>Available Quick Options:</h3>
-            <div class="location-option">1. Augment</div>
-            <div class="location-option">2. Warframe</div>
-        </div>
-         -->
-        {% if pastebin %}
-            <h2>pastebin URLs:</h2>
+        {% if paste %}
+            <h2>paste URLs:</h2>
             <ul>
             {% for url in pastebin %}
                 <li style="color:red;">{{ url }}</li>
