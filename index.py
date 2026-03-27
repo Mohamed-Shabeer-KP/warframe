@@ -22,6 +22,7 @@ market_data: List[Item] = []
 
 MARKET_ITEMS_URL = 'https://api.warframe.market/v2/items'
 MARKET_ORDER_URL = 'https://api.warframe.market/v2/orders/item/{}'
+PATEBIN_URL_COLLECTION = 'https://pastebin.com/3K1GNKLn'
 
 # Global variables to store search results
 search_results = {}
@@ -60,10 +61,27 @@ def fetch_orders_for_mod(mod_slug: str) -> List[Order]:
     print(f"⚠️  Failed to fetch orders for '{mod_slug}'.")
     return []
 
-def getPaste(user_input: str):
+def processShortcut(input_number: str)
+    """Fetch pastebin url based on shortcut number"""
+    try:
+        response = requests.get(PATEBIN_URL_COLLECTION)
+        if response.status_code == 200:
+            pastebin_url_list = response.text.strip().splitlines()
+            for line in pastebin_url_list:
+                line = line.strip()
+                if line:  # skip empty lines
+                    key, value = line.split("|", 1)
+                    mapping[key] = value
+            return mapping
+        print(f"❌ Failed to fetch data from Pastebin — Status code: {response.status_code}")
+    except Exception as e:
+        print(f"❌ Error fetching data from Pastebin: {e}")
+    return []
+
+def getPaste(pastebin_url: str):
     """Fetch mod list from Pastebin URL and return as a list of mod slugs."""
     try:
-        response = requests.get(user_input)
+        response = requests.get(pastebin_url)
         if response.status_code == 200:
             mods_list = response.text.strip().splitlines()
             print(f"✅ Fetched {len(mods_list)} mods from Pastebin.")
@@ -75,40 +93,18 @@ def getPaste(user_input: str):
 
 def modified_loc(user_input_prompt: str):
     """Modified version of loc() that returns results instead of printing them"""
-    
-    # print(f"🔍 Fetching market")
-    # getMarket()
-    
-    # locations_map = {
-    #     "1": "augment",
-    #     "2": "warframe",
-    # }
 
     # Process user input
     user_input = user_input_prompt
 
-    # Process input: convert numbers via map, keep others as custom locations
-    # selected_locations = []
-    # for val in user_input:
-    #     val = val.strip()
-    #     if val in locations_map:
-    #         print(locations_map[val], file=sys.stderr)
-    #         selected_locations.append(locations_map[val].strip().lower())
-    #     else:
-    #         print(val, file=sys.stderr)
-    #         selected_locations.append(val.strip().lower())
-
-    # if not selected_locations:
-    #     return {
-    #         "error": "Invalid input. Please enter at least one valid location."
-    #     }
-
-    pastebin_mods = getPaste(user_input)
-
-    # print(f"🔍 Fetching mods")
-    # mods_list = []
-    # for mod in pastebin_items:
-    #     mods_list.append(getMod(mod))
+    if user_input.isdigit():
+        pastebin_dict = processShortcut(user_input)
+        if user_input in pastebin_dict:
+            pastebin_mods = getPaste(pastebin_dict[user_input])
+        else:
+            print("Not found")
+    else
+        pastebin_mods = getPaste(pastebin_url)
 
     print(f"🔍 Fetching orders")
     all_orders = []
