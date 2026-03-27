@@ -111,13 +111,14 @@ def processInput(user_input: str):
 
     if user_input.isdigit():
         pastebin_dict = processMainPaste()
-        return render_template('index.html',test=pastebin_dict)
+        
         if user_input in pastebin_dict:
            
             pastebin_mods = getPaste(pastebin_dict[user_input])
         else:
             print("Not found")
     else:
+        return render_template('index.html',test="asdasdads")
         pastebin_mods = getPaste(user_input)
 
     print(f"🔍 Fetching orders")
