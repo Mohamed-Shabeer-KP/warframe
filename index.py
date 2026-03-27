@@ -69,9 +69,12 @@ def processShortcut(input_number: str)
             pastebin_url_list = response.text.strip().splitlines()
             for line in pastebin_url_list:
                 line = line.strip()
-                if line:  # skip empty lines
-                    key, value = line.split("|", 1)
-                    mapping[key] = value
+                if line:
+                    parts = line.split("|")
+                    if len(parts) >= 2:  # make sure we have at least key and value
+                        key = parts[0]
+                        value = parts[1]
+                        mapping[key] = value
             return mapping
         print(f"❌ Failed to fetch data from Pastebin — Status code: {response.status_code}")
     except Exception as e:
