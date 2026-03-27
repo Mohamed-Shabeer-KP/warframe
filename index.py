@@ -8,6 +8,9 @@ from contextlib import redirect_stdout
 
 import requests
 
+import logging
+logging.basicConfig(level=logging.DEBUG)
+
 app = Flask(__name__)
 app.secret_key = "your_secret_key_here" 
 
@@ -118,7 +121,7 @@ def processInput(user_input: str):
         else:
             print("Not found")
     else:
-        return render_template("index.html", log="Not found")
+        app.logger.debug("Processing string url")
         pastebin_mods = getPaste(user_input)
 
     print(f"🔍 Fetching orders")
