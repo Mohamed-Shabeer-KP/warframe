@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, redirect, url_for, flash
+from flask import Flask, render_template, request, redirect, url_for
 import sys
 import io
 
@@ -56,7 +56,6 @@ def fetch_orders_for_mod(mod_slug: str) -> List[Order]:
     """Fetch orders for a given mod and tag each order with its mod name and URL."""
     orders_data = fetch_json(MARKET_ORDER_URL.format(mod_slug))
     print(f"🔍 Fetching orders for '{mod_slug}' from URL: {MARKET_ORDER_URL.format(mod_slug)}")
-    flash(f"🔍 Fetching orders for '{mod_slug}' from URL: {MARKET_ORDER_URL.format(mod_slug)}")
     return orders_data
     print(f"⚠️  Failed to fetch orders for '{mod_slug}'.")
     return []
