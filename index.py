@@ -27,6 +27,143 @@ PATEBIN_URL_COLLECTION = 'https://pastebin.com/raw/DugQBXdL'
 # Global variables to store search results
 search_results = {}
 
+def fetch_json(url: str) -> Any:
+    """Helper to fetch and return JSON from a URL."""
+    response = requests.get(url)
+    if response.status_code == 200:
+        return response.json()
+    print(
+        f"❌ Failed to fetch data from {url} — Status code: {response.status_code}"
+    )
+    return None
+
+def getMarket():
+    global market_data
+    data = fetch_json(MARKET_ITEMS_URL)
+    if data:
+        market_data = data.get("data", [])
+        print(f"✅ Fetched {len(market_data)} market items.")
+
+def getMod(mod_location: str):
+    global mods_data
+    if market_data:
+        # Check for gameRef in market_data items and filter by mod_location 
+        mods_data = [item for item in market_data if mod_location.lower() in item.get("tags", "")]
+        print(f"✅ Fetched {len(mods_data)} mods.")
+    return mods_data
+
+def fetch_orders_for_mod(mod_slug: str) -> List[Order]:
+    """Fetch orders for a given mod and tag each order with its mod name and URL."""
+    orders_data = fetch_json(MARKET_ORDER_URL.format(mod_slug))
+    print(f"🔍 Fetching orders for '{mod_slug}' from URL: {MARKET_ORDER_URL.format(mod_slug)}")
+    return orders_data
+    print(f"⚠️  Failed to fetch orders for '{mod_slug}'.")
+    return []
+
+def processShortcut(input_number: str):
+    """Fetch main warframe collection paste"""
+    try:
+        response = requests.get(PATEBIN_URL_COLLECTION)
+        if response.status_code == 200:
+            pastebin_url_list = response.text.strip().splitlines()
+            for line in pastebin_url_list:
+                line = line.strip()
+                if line:
+                    parts = line.split("|")
+                    if len(parts) >= 2:  # make sure we have at least key and value
+                        key = parts[0]
+                        value = parts[1]
+                        mapping[key] = value
+            return mapping
+        print(f"❌ Failed to fetch data from Pastebin — Status code: {response.status_code}")
+    except Exception as e:
+        print(f"❌ Error fetching data from Pastebin: {e}")
+    return []
+
+def getPaste(pastebin_url: str):
+    """Fetch mod list from Pastebin URL and return as a list of mod slugs."""
+    try:
+        response = requests.get(pastebin_url)
+        if response.status_code == 200:
+            mods_list = response.text.strip().splitlines()
+            print(f"✅ Fetched {len(mods_list)} mods from Pastebin.")
+            return mods_list
+        print(f"❌ Failed to fetch data from Pastebin — Status code: {response.status_code}")
+    except Exception as e:
+        print(f"❌ Error fetching data from Pastebin: {e}")
+    return []
+
+def modified_loc(user_input_prompt: str):
+    """Modified version of loc() that returns results instead of printing them"""
+
+    # Process user input
+    user_input = user_input_prompt
+
+    if user_input.isdigit():
+        pastebin_dict = processShortcut(user_input)
+        if user_input in pastebin_dict:
+            pastebin_mods = getPaste(pastebin_dict[user_input])
+        else:
+            print("Not found")
+    else
+        pastebin_mods = getPaste(pastebin_url)
+
+    print(f"🔍 Fetching orders")
+    all_orders = []
+    error_list = []
+    for mod in pastebin_mods:
+        try:
+            orders = fetch_orders_for_mod(mod)
+
+            for x in orders['data']:
+                x['mod_name'] = mod
+
+            all_orders.append(orders['data'])
+        except Exception as e:
+            print(f"❌ Error fetching orders for mod '{mod}': {e}")
+            error = f"Error fetching orders for mod '{mod}': {e}"
+            error_list.append(error)
+
+    # Filter and sort orders (only visible, in-game, buy orders)
+    sell_orders = []
+    for orders in all_orders:
+        for order in orders:
+            if (order['visible'] and order['type'] == 'buy' and order['user']['status'] == 'ingame'):
+                sell_orders.append(order)
+
+    # Sort descending by platinum
+    sorted_orders = sorted(sell_orders,
+                           key=lambda x: x.get("platinum", 0),
+                           reverse=True)
+    return {
+        "orders": sorted_orders,
+        "error":  error_list
+    }
+
+
+@app.route('/')
+def index():
+    """Show the main search form"""
+    # results = getMainPaste()
+    return render_template('index.html')
+
+@app.route('/search', methods=['POST'])
+def search():
+    """Handle form submission and show results"""
+    locations = request.form.get('locations', '')
+    if not locations:
+        return render_template('results.html',
+                               error="Please enter at least one location",
+                               search_query="")
+
+    # Call the modified loc function
+    results = modified_loc(locations)
+    return render_template('results.html',
+                           mods_found=results.get('mods_found', {}),
+                           orders=results.get('orders', []),
+                           error=results.get('error'),
+                           search_query=results.get('search_query', locations))
+
 if __name__ == '__main__':
     # Initialize data on startup
 
