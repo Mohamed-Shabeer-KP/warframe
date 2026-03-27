@@ -120,7 +120,7 @@ def processInput(user_input: str):
         else:
             print("Not found")
     else:
-        app.logger.debug("Processing string url")
+        app.logger.warning("Processing string url")
         pastebin_mods = getPaste(user_input)
 
     print(f"🔍 Fetching orders")
