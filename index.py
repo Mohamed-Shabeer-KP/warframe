@@ -161,8 +161,9 @@ def modified_loc(user_input_prompt: str):
 @app.route('/')
 def index():
     """Show the main search form"""
-    # results = getMainPaste()
-    return render_template('index.html')
+    results = getMainPaste()
+    return render_template('index.html',
+                            paste=results.get('paste', []))
 
 @app.route('/search', methods=['POST'])
 def search():
