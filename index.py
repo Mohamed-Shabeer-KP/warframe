@@ -60,22 +60,22 @@ def fetch_orders_for_mod(mod_slug: str) -> List[Order]:
     print(f"⚠️  Failed to fetch orders for '{mod_slug}'.")
     return []
 
-def getMainPaste():
-"""Fetch main warframe collection paste"""
-    try:
-        response = requests.get(PATEBIN_URL_COLLECTION)
-        if response.status_code == 200:
-            pastebin_url_list = response.text.strip().splitlines()
-            for line in pastebin_url_list:
-                line = line.strip()
-                mapping.append(line)
-            return {
-                "paste": mapping
-            }
-        print(f"❌ Failed to fetch data from Pastebin — Status code: {response.status_code}")
-    except Exception as e:
-        print(f"❌ Error fetching data from Pastebin: {e}")
-    return []
+# def getMainPaste():
+# """Fetch main warframe collection paste"""
+#     try:
+#         response = requests.get(PATEBIN_URL_COLLECTION)
+#         if response.status_code == 200:
+#             pastebin_url_list = response.text.strip().splitlines()
+#             for line in pastebin_url_list:
+#                 line = line.strip()
+#                 mapping.append(line)
+#             return {
+#                 "paste": mapping
+#             }
+#         print(f"❌ Failed to fetch data from Pastebin — Status code: {response.status_code}")
+#     except Exception as e:
+#         print(f"❌ Error fetching data from Pastebin: {e}")
+#     return []
 
 def processShortcut(input_number: str):
     """Fetch main warframe collection paste"""
