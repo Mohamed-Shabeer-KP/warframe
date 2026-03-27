@@ -123,7 +123,7 @@ def modified_loc(user_input_prompt: str):
     #     # else:
     #     print("Not found")
     # else:
-    pastebin_mods = getPaste(user_input)
+    # pastebin_mods = getPaste(user_input)
 
     print(f"🔍 Fetching orders")
     all_orders = []
