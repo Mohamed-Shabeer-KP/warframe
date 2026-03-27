@@ -82,14 +82,7 @@
     <div class="container">
         <h1>🔍 Warframe Mod Selling - Search using warframe name</h1>
         
-        {% if paste %}
-            <h2>paste URLs:</h2>
-            <ul>
-            {% for url in pastebin %}
-                <li style="color:red;">{{ url }}</li>
-            {% endfor %}
-            </ul>
-        {% paste %}
+
 
         <form action="{{ url_for('search') }}" method="post">
             <label>Enter Paste bin <b>raw</b> url of mod list (mods should be in new lines and give mod slug):</label><br>
