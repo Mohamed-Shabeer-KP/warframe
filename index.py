@@ -116,14 +116,14 @@ def modified_loc(user_input_prompt: str):
     # Process user input
     user_input = user_input_prompt
 
-    if user_input.isdigit():
-        # pastebin_dict = processShortcut(user_input)
-        # if user_input in pastebin_dict:
-        #     pastebin_mods = getPaste(pastebin_dict[user_input])
-        # else:
-        print("Not found")
-    else:
-        pastebin_mods = getPaste(pastebin_url)
+    # if user_input.isdigit():
+    #     # pastebin_dict = processShortcut(user_input)
+    #     # if user_input in pastebin_dict:
+    #     #     pastebin_mods = getPaste(pastebin_dict[user_input])
+    #     # else:
+    #     print("Not found")
+    # else:
+    pastebin_mods = getPaste(pastebin_url)
 
     print(f"🔍 Fetching orders")
     all_orders = []
