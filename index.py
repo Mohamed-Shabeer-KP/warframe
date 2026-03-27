@@ -81,7 +81,6 @@ def processMainPaste():
         if response.status_code == 200:
             pastebin_url_list = response.text.strip().splitlines()
             for line in pastebin_url_list:
-                line = line.strip()
                 if line:
                     parts = line.split("|")
                     if len(parts) >= 2:  # make sure we have at least key and value
