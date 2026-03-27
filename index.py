@@ -113,7 +113,7 @@ def processInput(user_input: str):
         pastebin_dict = processMainPaste()
         if user_input in pastebin_dict:
             return render_template('index.html',
-                            test=results.get('test', []))
+                            test=pastebin_dict, {})
             pastebin_mods = getPaste(pastebin_dict[user_input])
         else:
             print("Not found")
