@@ -118,7 +118,7 @@ def processInput(user_input: str):
         else:
             print("Not found")
     else:
-        return render_template('index.html',test="asdasdads")
+        render_template('index.html',log="asdasdads")
         pastebin_mods = getPaste(user_input)
 
     print(f"🔍 Fetching orders")
