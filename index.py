@@ -22,7 +22,7 @@ market_data: List[Item] = []
 
 MARKET_ITEMS_URL = 'https://api.warframe.market/v2/items'
 MARKET_ORDER_URL = 'https://api.warframe.market/v2/orders/item/{}'
-PATEBIN_URL_COLLECTION = 'https://pastebin.com/3K1GNKLn'
+PATEBIN_URL_COLLECTION = 'https://pastebin.com/raw/DugQBXdL'
 
 # Global variables to store search results
 search_results = {}
