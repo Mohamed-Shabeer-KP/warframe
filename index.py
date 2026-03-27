@@ -112,8 +112,7 @@ def processInput(user_input: str):
     if user_input.isdigit():
         pastebin_dict = processMainPaste()
         if user_input in pastebin_dict:
-            return render_template('index.html',
-                            test=pastebin_dict, {})
+            return render_template('index.html',test=pastebin_dict)
             pastebin_mods = getPaste(pastebin_dict[user_input])
         else:
             print("Not found")
