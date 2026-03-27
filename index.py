@@ -75,6 +75,7 @@ def getMainPaste():
     return []
 
 def processMainPaste():
+    mapping = {}
     """Fetch main warframe collection paste"""
     try:
         response = requests.get(PATEBIN_URL_COLLECTION)
@@ -84,7 +85,7 @@ def processMainPaste():
                 if line:
                     parts = line.split("|")
                     if len(parts) >= 2:  # make sure we have at least key and value
-                        key = int(parts[0])
+                        key = parts[0]
                         value = parts[1]
                         mapping[key] = value
             return mapping
