@@ -66,11 +66,8 @@ def getMainPaste():
         response = requests.get(PATEBIN_URL_COLLECTION)
         if response.status_code == 200:
             pastebin_url_list = response.text.strip().splitlines()
-            for line in pastebin_url_list:
-                line = line.strip()
-                mapping.append(line)
             return {
-                "paste": mapping
+                "paste": pastebin_url_list
             }
         print(f"❌ Failed to fetch data from Pastebin — Status code: {response.status_code}")
     except Exception as e:
