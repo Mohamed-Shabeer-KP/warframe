@@ -87,13 +87,10 @@ def processMainPaste():
             for line in pastebin_url_list:
                 if line:
                     parts = line.split("|")
-                    app.logger.warning(parts)
                     if len(parts) >= 2:  # make sure we have at least key and value
-                        app.logger.warning(len(parts))
                         key = parts[0]
                         value = parts[1]
                         mapping[key] = value
-            app.logger.warning("mapping",mapping)
             return mapping
         print(f"❌ Failed to fetch data from Pastebin — Status code: {response.status_code}")
     except Exception as e:
@@ -118,8 +115,8 @@ def processInput(user_input: str):
 
     pastebin_mods = []
     if user_input.isdigit():
+        app.logger.info("Processing shortcut selection")
         pastebin_dict = processMainPaste()
-        app.logger.warning(pastebin_dict)
         if user_input in pastebin_dict:
             pastebin_mods = getPaste(pastebin_dict[user_input])
         else:
