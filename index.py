@@ -80,14 +80,14 @@ def processMainPaste():
         response = requests.get(PATEBIN_URL_COLLECTION)
         if response.status_code == 200:
             pastebin_url_list = response.text.strip().splitlines()
-            # for line in pastebin_url_list:
-            #     if line:
-            #         parts = line.split("|")
-            #         if len(parts) >= 2:  # make sure we have at least key and value
-            #             key = parts[0]
-            #             value = parts[1]
-            #             mapping[key] = value
-            return pastebin_url_list
+            for line in pastebin_url_list:
+                if line:
+                    parts = line.split("|")
+                    if len(parts) >= 2:  # make sure we have at least key and value
+                        key = parts[0]
+                        value = parts[1]
+                        mapping[key] = value
+            return mapping
         print(f"❌ Failed to fetch data from Pastebin — Status code: {response.status_code}")
     except Exception as e:
         print(f"❌ Error fetching data from Pastebin: {e}")
@@ -110,11 +110,11 @@ def processInput(user_input: str):
     """Process user input"""
 
     if user_input.isdigit():
-        # pastebin_dict = processMainPaste()
-        # if user_input in pastebin_dict:
-        #     pastebin_mods = getPaste(pastebin_dict[user_input])
-        # else:
-        print("Not found")
+        pastebin_dict = processMainPaste()
+        if user_input in pastebin_dict:
+            pastebin_mods = getPaste(pastebin_dict[user_input])
+        else:
+            print("Not found")
     else:
         pastebin_mods = getPaste(user_input)
 
