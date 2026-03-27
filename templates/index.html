@@ -83,7 +83,7 @@
         <h1>🔍 Warframe Mod Selling - Search using warframe name</h1>
         
         {% if paste %}
-            <h3>Paste URLs:</h3>
+            <h3>Preset Paste URLs:</h3>
             <ul>
             {% for url in paste %}
                 <li>{{ url }}</li>
@@ -92,6 +92,7 @@
         {% endif %}
 
         <form action="{{ url_for('search') }}" method="post">
+            <h3>Custom Paste URLs:</h3>
             <label>Enter Paste bin <b>raw</b> url of mod list (mods should be in new lines and give mod slug):</label><br>
             <p>Example: https://pastebin.com/raw/3K1GNKLn</p>
             <input type="text" name="locations" required>
