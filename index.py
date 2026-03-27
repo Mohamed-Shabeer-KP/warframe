@@ -115,12 +115,13 @@ def processInput(user_input: str):
     pastebin_mods = []
     if user_input.isdigit():
         pastebin_dict = processMainPaste()
+        app.logger.warning(pastebin_dict)
         if user_input in pastebin_dict:
             pastebin_mods = getPaste(pastebin_dict[user_input])
         else:
             print("Not found")
     else:
-        app.logger.warning("Processing string url")
+        app.logger.info("Processing string url")
         pastebin_mods = getPaste(user_input)
 
     print(f"🔍 Fetching orders")
