@@ -86,10 +86,10 @@ def processMainPaste():
             for line in pastebin_url_list:
                 if line:
                     parts = line.split("|")
+                    app.logger.warning(parts)
                     if len(parts) >= 2:  # make sure we have at least key and value
                         key = parts[0]
                         value = parts[1]
-                        app.logger.warning(key,value)
                         mapping[key] = value
             return mapping
         print(f"❌ Failed to fetch data from Pastebin — Status code: {response.status_code}")
