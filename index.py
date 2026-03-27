@@ -83,6 +83,7 @@ def processMainPaste():
         response = requests.get(PATEBIN_URL_COLLECTION)
         if response.status_code == 200:
             pastebin_url_list = response.text.strip().splitlines()
+            app.logger.warning(pastebin_url_list)
             for line in pastebin_url_list:
                 if line:
                     parts = line.split("|")
