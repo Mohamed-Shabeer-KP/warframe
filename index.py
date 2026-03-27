@@ -1,9 +1,4 @@
 from flask import Flask, render_template, request, redirect, url_for
-
-app = Flask(__name__)
-app.secret_key = "your_secret_key_here" 
-
-
 import sys
 import io
 
@@ -12,6 +7,9 @@ from typing import List, Dict, Any
 from contextlib import redirect_stdout
 
 import requests
+
+app = Flask(__name__)
+app.secret_key = "your_secret_key_here" 
 
 # Type aliases for readability
 Mod = Dict[str, Any]
