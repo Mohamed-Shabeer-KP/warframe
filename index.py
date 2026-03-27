@@ -74,7 +74,7 @@ def getMainPaste():
         print(f"❌ Error fetching data from Pastebin: {e}")
     return []
 
-def processShortcut(input_number: str):
+def processMainPaste():
     """Fetch main warframe collection paste"""
     try:
         response = requests.get(PATEBIN_URL_COLLECTION)
@@ -107,14 +107,11 @@ def getPaste(pastebin_url: str):
         print(f"❌ Error fetching data from Pastebin: {e}")
     return []
 
-def modified_loc(user_input_prompt: str):
-    """Modified version of loc() that returns results instead of printing them"""
-
-    # Process user input
-    user_input = user_input_prompt
+def processInput(user_input: str):
+    """Process user input"""
 
     if user_input.isdigit():
-        pastebin_dict = processShortcut(user_input)
+        pastebin_dict = processMainPaste()
         if user_input in pastebin_dict:
             pastebin_mods = getPaste(pastebin_dict[user_input])
         else:
@@ -165,19 +162,19 @@ def index():
 @app.route('/search', methods=['POST'])
 def search():
     """Handle form submission and show results"""
-    locations = request.form.get('locations', '')
-    if not locations:
+    user_input = request.form.get('user_input', '')
+    if not user_input:
         return render_template('results.html',
-                               error="Please enter at least one location",
+                               error="Please enter an input",
                                search_query="")
 
     # Call the modified loc function
-    results = modified_loc(locations)
+    results = processInput(user_input)
     return render_template('results.html',
                            mods_found=results.get('mods_found', {}),
                            orders=results.get('orders', []),
                            error=results.get('error'),
-                           search_query=results.get('search_query', locations))
+                           search_query=results.get('search_query', user_input))
 
 if __name__ == '__main__':
     # Initialize data on startup
