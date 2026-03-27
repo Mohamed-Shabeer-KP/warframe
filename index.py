@@ -112,11 +112,10 @@ def getPaste(pastebin_url: str):
 def processInput(user_input: str):
     """Process user input"""
 
+    pastebin_mods = []
     if user_input.isdigit():
         pastebin_dict = processMainPaste()
-        
         if user_input in pastebin_dict:
-           
             pastebin_mods = getPaste(pastebin_dict[user_input])
         else:
             print("Not found")
