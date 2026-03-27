@@ -88,6 +88,15 @@
             <div class="location-option">2. Warframe</div>
         </div>
          -->
+        {% if pastebin %}
+            <h2>pastebin URLs:</h2>
+            <ul>
+            {% for url in pastebin %}
+                <li style="color:red;">{{ url }}</li>
+            {% endfor %}
+            </ul>
+        {% pastebin %}
+
         <form action="{{ url_for('search') }}" method="post">
             <label>Enter Paste bin <b>raw</b> url of mod list (mods should be in new lines and give mod slug):</label><br>
             <p>Example: https://pastebin.com/raw/3K1GNKLn</p>

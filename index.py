@@ -61,8 +61,25 @@ def fetch_orders_for_mod(mod_slug: str) -> List[Order]:
     print(f"⚠️  Failed to fetch orders for '{mod_slug}'.")
     return []
 
-def processShortcut(input_number: str)
-    """Fetch pastebin url based on shortcut number"""
+def getMainPaste():
+"""Fetch main warframe collection paste"""
+    try:
+        response = requests.get(PATEBIN_URL_COLLECTION)
+        if response.status_code == 200:
+            pastebin_url_list = response.text.strip().splitlines()
+            for line in pastebin_url_list:
+                line = line.strip()
+                mapping.append(line)
+            return {
+                "paste": mapping
+            }
+        print(f"❌ Failed to fetch data from Pastebin — Status code: {response.status_code}")
+    except Exception as e:
+        print(f"❌ Error fetching data from Pastebin: {e}")
+    return []
+
+def processShortcut(input_number: str):
+    """Fetch main warframe collection paste"""
     try:
         response = requests.get(PATEBIN_URL_COLLECTION)
         if response.status_code == 200:
@@ -136,7 +153,6 @@ def modified_loc(user_input_prompt: str):
     sorted_orders = sorted(sell_orders,
                            key=lambda x: x.get("platinum", 0),
                            reverse=True)
-
     return {
         "orders": sorted_orders,
         "error":  error_list
@@ -146,7 +162,10 @@ def modified_loc(user_input_prompt: str):
 @app.route('/')
 def index():
     """Show the main search form"""
-    return render_template('index.html')
+    results = getMainPaste()
+    return render_template('index.html',
+                           pastebin=results.get('paste',[]),
+                        )
 
 @app.route('/search', methods=['POST'])
 def search():
